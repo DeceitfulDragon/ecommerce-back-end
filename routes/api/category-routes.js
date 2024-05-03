@@ -3,26 +3,82 @@ const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
 
-router.get('/', (req, res) => {
-  // find all categories
-  // be sure to include its associated Products
+// GET CATEGORIES
+router.get('/', async (req, res) => {
+
+  try {
+    const categoryData = await Category.findAll({
+      include: [Product]
+    });
+
+    if(!categoryData) {
+      return res.status(400).json({ message: "Could not find categories"});
+    }
+    res.status(200).json(categoryData);
+
+  } catch(err) { res.status(500).json(err); }
 });
 
-router.get('/:id', (req, res) => {
-  // find one category by its `id` value
-  // be sure to include its associated Products
+// GET CATEGORY
+router.get('/:id', async (req, res) => {
+  try {
+    const categoryData = await Category.findOne(req.params.id, {
+      where: {
+        id: req.params.id
+      },
+      include: [Product]
+    });
+
+    if (!categoryData) {
+      return res.status(400).json({ message: "Could not find category" });
+    }
+    res.status(200).json(categoryData);
+
+  } catch (err) { res.status(500).json(err); }
 });
 
-router.post('/', (req, res) => {
-  // create a new category
+// POST
+router.post('/', async (req, res) => {
+  try {
+    const newCategoryData = await Category.create(req.body);
+
+    res.status(200).json(newCategoryData);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+// UPDATE
+router.put('/:id', async (req, res) => {
+  try {
+    const categoryData = await Category.update(req.body, {
+      where: { 
+        id: req.params.id 
+      }
+    });
+
+    res.status(200).json({ message: "Category updated" });
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+// DELETE
+router.delete('/:id', async (req, res) => {
+  try {
+    const categoryData = await Category.destroy({
+      where: { 
+        id: req.params.id 
+      }
+    });
+
+    if (!categoryData) {
+      return res.status(404).json({ message: "No category found" });
+    }
+    res.status(200).json({ message: "Category deleted" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;

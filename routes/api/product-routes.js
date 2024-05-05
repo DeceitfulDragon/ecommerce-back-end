@@ -3,7 +3,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
 
-// get all products
+// GET all products
 router.get('/', async (req, res) => {
   try {
     const productData = await Product.findAll({
@@ -22,10 +22,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// get one product
+// GET one product
 router.get('/:id', async (req, res) => {
   try {
-    const productData = await Product.findOne(req.params.id, {
+    const productData = await Product.findOne({
       where: {
         id: req.params.id
       },
@@ -36,13 +36,15 @@ router.get('/:id', async (req, res) => {
     });
 
     if (!productData) {
-      return res.status(404).json({ message: "No product found" });
+      return res.status(404).json({ message: "No product found with the specified ID" });
     }
     res.status(200).json(productData);
+
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
 
 // create new product
 router.post('/', (req, res) => {

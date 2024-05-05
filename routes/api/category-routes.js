@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 // GET CATEGORY
 router.get('/:id', async (req, res) => {
   try {
-    const categoryData = await Category.findOne(req.params.id, {
+    const categoryData = await Category.findOne({
       where: {
         id: req.params.id
       },
@@ -30,11 +30,13 @@ router.get('/:id', async (req, res) => {
     });
 
     if (!categoryData) {
-      return res.status(400).json({ message: "Could not find category" });
+      return res.status(404).json({ message: "Could not find category" });
     }
     res.status(200).json(categoryData);
 
-  } catch (err) { res.status(500).json(err); }
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 // POST
